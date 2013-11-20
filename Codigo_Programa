@@ -1,0 +1,155 @@
+# proyecto
+
+
+import random, sys, time, pygame
+from pygame.locals import *
+#import random
+import wiringpi2
+#import time
+#import sys
+#import pygame
+
+
+pygame.init()
+BEEP1 = pygame.mixer.Sound('beep1.WAV')
+BEEP2 = pygame.mixer.Sound('beep2.WAV')
+BEEP3 = pygame.mixer.Sound('beep3.wav')
+BEEP4 = pygame.mixer.Sound('beep4.wav')
+fallo = pygame.mixer.Sound('error.wav')
+
+io=wiringpi2.GPIO(wiringpi2.GPIO.WPI_MODE_PINS)
+
+io.pinMode(0,io.OUTPUT) #LED ROJO
+io.pinMode(1,io.OUTPUT) #LED AMARILLO 
+io.pinMode(2,io.OUTPUT) #LED VERDE
+io.pinMode(3,io.OUTPUT) #LED AZUL
+
+io.pinMode(4,io.INPUT) #PULSADOR ROJO
+io.pinMode(5,io.INPUT) #PULSADOR AMARILLO
+io.pinMode(6,io.INPUT) #PULSADOR VERDE
+io.pinMode(7,io.INPUT) #PULSADOR AZUL
+
+
+
+def color(num):
+  
+  if num =='0':    #LED ROJO
+    io.digitalWrite(0,io.HIGH)
+    BEEP1.play()
+    time.sleep (0.6)
+    io.digitalWrite(0,io.LOW)
+    time.sleep (0.4)
+  if num =='1':    #LED AMARILLO
+    io.digitalWrite(1,io.HIGH)
+    BEEP2.play()
+    time.sleep (0.6)
+    io.digitalWrite(1,io.LOW)
+    time.sleep (0.4)
+  if num =='2':    #LED VERDE
+    io.digitalWrite(2,io.HIGH)
+    BEEP3.play()
+    time.sleep (0.6)
+    io.digitalWrite(2,io.LOW)
+    time.sleep (0.4)
+  if num =='3':    #LED AZUL
+    io.digitalWrite(3,io.HIGH)
+    BEEP4.play()
+    time.sleep (0.6)
+    io.digitalWrite(3,io.LOW)
+    time.sleep (0.4)    
+  return()
+
+def pulsador(): 
+  
+  if io.digitalRead(4)==io.HIGH:
+    io.digitalWrite(0,io.HIGH)
+    BEEP1.play()
+    time.sleep (0.2)
+    io.digitalWrite(0,io.LOW)
+    time.sleep (0.2)
+    return '0'
+    #time.sleep (0.6)    
+  elif io.digitalRead(5)==io.HIGH:
+    io.digitalWrite(1,io.HIGH)
+    BEEP2.play()
+    time.sleep (0.2)
+    io.digitalWrite(1,io.LOW)
+    time.sleep (0.2)
+    return '1'
+    #time.sleep (0.6)    
+  elif io.digitalRead(6)==io.HIGH:
+    io.digitalWrite(2,io.HIGH)
+    BEEP3.play()
+    time.sleep (0.2)
+    io.digitalWrite(2,io.LOW)
+    time.sleep (0.2)
+    return '2'
+    #time.sleep (0.6)    
+  elif io.digitalRead(7)==io.HIGH:
+    io.digitalWrite(3,io.HIGH)
+    BEEP4.play()
+    time.sleep (0.2)
+    io.digitalWrite(3,io.LOW)
+    time.sleep (0.2)  
+    return '3'
+    #time.sleep (0.6)    
+    
+  else:
+    return ''
+    
+nivel=1
+c=''
+cnt=0
+ind=0
+Correcta=True
+
+
+while Correcta==True: 
+  ind = nivel-1
+  for ind in range (nivel):
+    a=random.randint(0,3) 
+    c=str(c)+str(a)    
+    print ('Nivel: ' +str (len(c)))   
+   
+  j=0
+  for j in range (len(c)):
+    
+    color(c[j])
+  resp=0
+  
+  for resp in range (len(c)):
+    
+    aux=''
+    while str(aux)=='':
+      
+      aux=pulsador()
+            
+    if aux==c[resp]:
+      time.sleep(0.6)
+      
+      
+      Correcta=True
+    else:
+      Correcta=False
+      print ('Has fallado')
+      time.sleep(0.5)
+      fallo.play()
+      time.sleep(0.3) 
+      io.digitalWrite(0,io.HIGH)
+      time.sleep (0.3)
+      io.digitalWrite(1,io.HIGH)
+      time.sleep (0.3)
+      io.digitalWrite(2,io.HIGH)
+      time.sleep (0.3)
+      io.digitalWrite(3,io.HIGH)
+      time.sleep (0.3)
+      io.digitalWrite(3,io.LOW)
+      time.sleep (0.3)
+      io.digitalWrite(2,io.LOW)
+      time.sleep (0.3)
+      io.digitalWrite(1,io.LOW)
+      time.sleep (0.3)
+      io.digitalWrite(0,io.LOW)
+      time.sleep (0.3)
+      break 
+  
